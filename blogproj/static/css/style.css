@@ -1,0 +1,43 @@
+/* Global Body Styling */
+body {
+    background-color: #f8f9fa;
+}
+
+/* Navbar brand styling */
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.4rem;
+    letter-spacing: 1px;
+}
+
+/* Blog Card Styling (for later use) */
+.blog-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.blog-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Footer styling */
+footer {
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+/* Buttons */
+.btn-custom {
+    border-radius: 25px;
+    padding: 6px 18px;
+}
+
+/* Links */
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}

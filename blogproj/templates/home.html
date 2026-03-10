@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BlogSite</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .navbar {
+            background-color: #ffffff !important;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        .navbar-brand {
+            font-weight: 600;
+        }
+
+        .blog-section {
+            padding: 60px 0;
+        }
+
+        .blog-heading {
+            font-weight: 600;
+            margin-bottom: 40px;
+        }
+
+        .blog-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid #eaeaea;
+            transition: 0.3s ease;
+            height: 100%;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .blog-title {
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .blog-content {
+            color: #6c757d;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .blog-footer {
+            margin-top: 15px;
+            font-size: 13px;
+            color: #999;
+        }
+
+        .btn-primary {
+            border-radius: 20px;
+            padding: 6px 18px;
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light">
+  <div class="container">
+
+    <a class="navbar-brand" href="{% url 'home' %}">
+      BlogSite
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
+      <ul class="navbar-nav align-items-center gap-3">
+
+        {% if request.session.user_id %}
+
+            <li class="nav-item">
+              <a class="nav-link" href="#" onclick="confirm_logout()">Logout</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="btn btn-primary" href="/create">
+                Create Blog
+              </a>
+            </li>
+
+        {% else %}  
+
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'register' %}">Register</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'login' %}">Login</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="btn btn-primary" href="#" onclick="showLoginAlert(event)">
+                Create Blog
+              </a>
+            </li>
+
+        {% endif %}
+
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+<div class="container blog-section">
+    <h2 class="text-center blog-heading">Latest Posts</h2>
+
+    <div class="row g-4">
+
+        {% for blog in blogs %}
+        <div class="col-md-6 col-lg-4">
+             <div class="blog-card"
+                data-url="{% url 'blog_detail' blog.id %}"
+                onclick="openBlog(this)"
+                style="cursor:pointer;">
+                <h5 class="blog-title">
+                    <a href="{% url 'blog_detail' blog.id %}" style="text-decoration:none; color:inherit; display:inline-block; cursor:pointer;">
+                      {{ blog.title }}
+                      </a>
+                </h5>
+                <p class="blog-content">
+                    {{ blog.content|truncatewords:25 }}
+                </p>
+                <div class="blog-footer">
+                  Posted by <strong>{{ blog.author.username }}</strong>
+                </div>
+                 {% if request.session.user_id == blog.author.id %}
+        <div class="mt-3">
+            <a href="{% url 'edit_blog' blog.id %}" class="btn btn-sm btn-outline-primary">
+                Edit
+            </a>
+            <a href="{% url 'delete_blog' blog.id %}" class="btn btn-sm btn-outline-danger">
+                Delete
+            </a>
+        </div>
+    {% endif %}
+            </div>
+        </div>
+        {% empty %}
+            <p class="text-center text-muted">No blogs yet.</p>
+        {% endfor %}
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+function showLoginAlert(event) {
+    event.preventDefault();
+
+    Swal.fire({
+        icon: 'warning',
+        title: 'Login Required',
+        text: 'You must be logged in to create a blog post.',
+        confirmButtonText: 'Go to Login'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = "{% url 'login' %}";
+        }
+    });
+}
+
+function confirm_logout(){
+  Swal.fire({
+    title: 'Are you sure?',
+    text: "Do you really want to logout?",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, logout'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      window.location.href = "{% url 'logout' %}"
+    }
+  })
+}
+function openBlog(element){
+    const url = element.getAttribute("data-url");
+    window.location.href = url;
+}
+</script>
+
+</body>
+</html>
